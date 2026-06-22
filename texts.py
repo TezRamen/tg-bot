@@ -26,6 +26,7 @@ TEXTS = {
         "btn_back": "⬅️ Назад",
         "btn_change_lang": "🌐 Сменить язык",
         # Отзывы
+        "review_ask_machine": "Выберите автомат, которым вы воспользовались:",
         "review_ask_rating": "Пожалуйста, оцените нас от 1 до 5:",
         "review_ask_text": "Спасибо за оценку! Теперь напишите ваш отзыв, комментарий или предложение:",
         "review_done": "Спасибо за ваш отзыв! 🙏 Мы обязательно его учтём.",
@@ -43,6 +44,7 @@ TEXTS = {
         "btn_partner": "🤝 Partnership requests",
         "btn_back": "⬅️ Back",
         "btn_change_lang": "🌐 Change language",
+        "review_ask_machine": "Choose the machine you used:",
         "review_ask_rating": "Please rate us from 1 to 5:",
         "review_ask_text": "Thanks for the rating! Now please write your review, comment or suggestion:",
         "review_done": "Thank you for your feedback! 🙏 We really appreciate it.",
@@ -59,6 +61,7 @@ TEXTS = {
         "btn_partner": "🤝 Hamkorlik uchun arizalar",
         "btn_back": "⬅️ Orqaga",
         "btn_change_lang": "🌐 Tilni o'zgartirish",
+        "review_ask_machine": "Foydalangan avtomatingizni tanlang:",
         "review_ask_rating": "Iltimos, bizni 1 dan 5 gacha baholang:",
         "review_ask_text": "Baho uchun rahmat! Endi sharhingiz, izohingiz yoki taklifingizni yozing:",
         "review_done": "Sharhingiz uchun rahmat! 🙏 Biz uni albatta hisobga olamiz.",
@@ -70,6 +73,38 @@ TEXTS = {
         "cancelled": "Amal bekor qilindi. Menyuga qaytamiz.",
     },
 }
+
+# --------------------------------------------------------------------------- #
+# Список автоматов Tez Ramen.
+# ВРЕМЕННЫЙ список-пример — позже замени на реальные локации.
+# Чтобы добавить/убрать автомат, просто правь этот список.
+#   id  — внутренний код (латиницей, без пробелов), менять не обязательно
+#   ru/uz/en — подпись на кнопке на каждом языке
+# --------------------------------------------------------------------------- #
+MACHINES = [
+    {"id": "seul_mun",       "ru": "Сеул-Мун",        "uz": "Seul-Mun",        "en": "Seul-Mun"},
+    {"id": "skver_timura",   "ru": "Сквер А.Тимура",  "uz": "Skver A.Timur",   "en": "A.Timur Square"},
+    {"id": "m_kosmonavtov",  "ru": "М.Космонавтов",   "uz": "M.Kosmonavtov",   "en": "Kosmonavtov metro"},
+    {"id": "severny_vokzal", "ru": "Северный вокзал", "uz": "Severniy vokzal", "en": "Northern station"},
+    {"id": "shevchenko",     "ru": "Шевченко",        "uz": "Shevchenko",      "en": "Shevchenko str"},
+]
+
+# Кнопка «Другой / не указан» на случай, если автомата нет в списке
+MACHINE_OTHER = {
+    "id": "other",
+    "ru": "Другой / не указан",
+    "uz": "Boshqa / ko'rsatilmagan",
+    "en": "Other / not specified",
+}
+
+
+def machine_label(machine_id: str, lang: str) -> str:
+    """Подпись автомата на нужном языке по его id (с откатом на русский)."""
+    for m in MACHINES + [MACHINE_OTHER]:
+        if m["id"] == machine_id:
+            return m.get(lang) or m["ru"]
+    return machine_id
+
 
 # Подписи разделов для уведомления в группу (на русском, для админов)
 SECTION_LABELS = {

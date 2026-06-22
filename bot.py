@@ -31,7 +31,15 @@ from aiogram.types import (
     ReplyKeyboardRemove,
 )
 
-from texts import LANG_BUTTONS, SECTION_LABELS, WELCOME, t
+from texts import (
+    LANG_BUTTONS,
+    MACHINE_OTHER,
+    MACHINES,
+    SECTION_LABELS,
+    WELCOME,
+    machine_label,
+    t,
+)
 
 # --------------------------------------------------------------------------- #
 # Конфигурация (из переменных окружения)
@@ -58,6 +66,7 @@ dp = Dispatcher(storage=MemoryStorage())
 # Состояния (FSM)
 # --------------------------------------------------------------------------- #
 class ReviewForm(StatesGroup):
+    machine = State()
     rating = State()
     text = State()
 
@@ -89,6 +98,17 @@ def menu_keyboard(lang: str) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text=t(lang, "btn_change_lang"), callback_data="change_lang")],
         ]
     )
+
+
+def machine_keyboard(lang: str) -> InlineKeyboardMarkup:
+    rows = [
+        [InlineKeyboardButton(text=m[lang], callback_data=f"rmach:{m['id']}")]
+        for m in MACHINES
+    ]
+    rows.append(
+        [InlineKeyboardButton(text=MACHINE_OTHER[lang], callback_data=f"rmach:{MACHINE_OTHER['id']}")]
+    )
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 def rating_keyboard() -> InlineKeyboardMarkup:
@@ -170,6 +190,16 @@ async def on_back(query: CallbackQuery, state: FSMContext) -> None:
 @dp.callback_query(F.data == "sec:review")
 async def review_start(query: CallbackQuery, state: FSMContext) -> None:
     lang = await get_lang(state)
+    await state.set_state(ReviewForm.machine)
+    await query.message.edit_text(t(lang, "review_ask_machine"), reply_markup=machine_keyboard(lang))
+    await query.answer()
+
+
+@dp.callback_query(ReviewForm.machine, F.data.startswith("rmach:"))
+async def review_machine(query: CallbackQuery, state: FSMContext) -> None:
+    lang = await get_lang(state)
+    machine_id = query.data.split(":", 1)[1]
+    await state.update_data(machine_id=machine_id)
     await state.set_state(ReviewForm.rating)
     await query.message.edit_text(t(lang, "review_ask_rating"), reply_markup=rating_keyboard())
     await query.answer()
@@ -190,10 +220,13 @@ async def review_text(message: Message, state: FSMContext) -> None:
     lang = await get_lang(state)
     data = await state.get_data()
     rating = data.get("rating", "—")
+    machine_id = data.get("machine_id", "")
+    machine_ru = machine_label(machine_id, "ru") if machine_id else "—"
 
     group_text = (
         "💬 <b>Новый отзыв</b>\n"
         f"Язык: {SECTION_LABELS.get(lang, lang)}\n"
+        f"Автомат: {machine_ru}\n"
         f"Оценка: {'⭐' * int(rating) if str(rating).isdigit() else rating} ({rating}/5)\n"
         f"От: {user_link(message)}\n\n"
         f"Текст:\n{message.text}"
