@@ -1,0 +1,14 @@
+# Render Blueprint. Можно задеплоить через "New +" → "Blueprint",
+# либо создать Background Worker вручную (см. README).
+services:
+  - type: worker
+    name: tezramen-bot
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python bot.py"
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: GROUP_CHAT_ID
+        sync: false
