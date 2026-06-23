@@ -61,6 +61,12 @@ logger = logging.getLogger("tezramen-bot")
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
 
+# Бот ведёт диалог только в личных чатах. Любые сообщения и события из групп
+# (включая служебные «пользователь вступил в группу») игнорируются —
+# группа используется только как получатель уведомлений.
+dp.message.filter(F.chat.type == "private")
+dp.callback_query.filter(F.message.chat.type == "private")
+
 
 # --------------------------------------------------------------------------- #
 # Состояния (FSM)
