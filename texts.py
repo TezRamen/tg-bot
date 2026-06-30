@@ -29,6 +29,7 @@ TEXTS = {
         "review_ask_machine": "Выберите автомат, которым вы воспользовались:",
         "review_ask_rating": "Пожалуйста, оцените нас от 1 до 5:",
         "review_ask_text": "Спасибо за оценку! Теперь напишите ваш отзыв, комментарий или предложение:",
+        "review_ask_phone": "И последнее — поделитесь номером телефона (можно нажать кнопку ниже):",
         "review_done": "Спасибо за ваш отзыв! 🙏 Мы обязательно его учтём.",
         # Партнёрство
         "partner_ask_name": "Отлично! Как вас зовут?",
@@ -47,6 +48,7 @@ TEXTS = {
         "review_ask_machine": "Choose the machine you used:",
         "review_ask_rating": "Please rate us from 1 to 5:",
         "review_ask_text": "Thanks for the rating! Now please write your review, comment or suggestion:",
+        "review_ask_phone": "One last thing — please share your phone number (you can tap the button below):",
         "review_done": "Thank you for your feedback! 🙏 We really appreciate it.",
         "partner_ask_name": "Great! What is your name?",
         "partner_ask_phone": "Please share your phone number (you can tap the button below):",
@@ -64,6 +66,7 @@ TEXTS = {
         "review_ask_machine": "Foydalangan avtomatingizni tanlang:",
         "review_ask_rating": "Iltimos, bizni 1 dan 5 gacha baholang:",
         "review_ask_text": "Baho uchun rahmat! Endi sharhingiz, izohingiz yoki taklifingizni yozing:",
+        "review_ask_phone": "Va oxirgisi — telefon raqamingizni yuboring (quyidagi tugmani bosishingiz mumkin):",
         "review_done": "Sharhingiz uchun rahmat! 🙏 Biz uni albatta hisobga olamiz.",
         "partner_ask_name": "Ajoyib! Ismingiz nima?",
         "partner_ask_phone": "Telefon raqamingizni yuboring (quyidagi tugmani bosishingiz mumkin):",

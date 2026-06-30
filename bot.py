@@ -75,6 +75,7 @@ class ReviewForm(StatesGroup):
     machine = State()
     rating = State()
     text = State()
+    phone = State()
 
 
 class PartnerForm(StatesGroup):
@@ -224,24 +225,43 @@ async def review_rating(query: CallbackQuery, state: FSMContext) -> None:
 @dp.message(ReviewForm.text, F.text)
 async def review_text(message: Message, state: FSMContext) -> None:
     lang = await get_lang(state)
+    await state.update_data(review_text=message.text)
+    await state.set_state(ReviewForm.phone)
+    await message.answer(t(lang, "review_ask_phone"), reply_markup=phone_keyboard(lang))
+
+
+async def finish_review(message: Message, state: FSMContext, phone: str) -> None:
+    lang = await get_lang(state)
     data = await state.get_data()
     rating = data.get("rating", "—")
     machine_id = data.get("machine_id", "")
     machine_ru = machine_label(machine_id, "ru") if machine_id else "—"
+    review = data.get("review_text", "—")
 
     group_text = (
         "💬 <b>Новый отзыв</b>\n"
         f"Язык: {SECTION_LABELS.get(lang, lang)}\n"
         f"Автомат: {machine_ru}\n"
         f"Оценка: {'⭐' * int(rating) if str(rating).isdigit() else rating} ({rating}/5)\n"
+        f"Телефон: {phone}\n"
         f"От: {user_link(message)}\n\n"
-        f"Текст:\n{message.text}"
+        f"Текст:\n{review}"
     )
     await send_to_group(group_text)
 
     await state.set_state(None)
-    await message.answer(t(lang, "review_done"))
+    await message.answer(t(lang, "review_done"), reply_markup=ReplyKeyboardRemove())
     await message.answer(t(lang, "menu_title"), reply_markup=menu_keyboard(lang))
+
+
+@dp.message(ReviewForm.phone, F.contact)
+async def review_phone_contact(message: Message, state: FSMContext) -> None:
+    await finish_review(message, state, message.contact.phone_number)
+
+
+@dp.message(ReviewForm.phone, F.text)
+async def review_phone_text(message: Message, state: FSMContext) -> None:
+    await finish_review(message, state, message.text.strip())
 
 
 # --------------------------------------------------------------------------- #
